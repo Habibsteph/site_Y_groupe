@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ffffff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* Glow premium qui suit les contours */
+
+/*.glow-hover {
+  position: relative;
+  border-radius: inherit;
+  transition: all 0.35s ease;
+}
+
+.glow-hover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+
+  border: 1px solid rgba(255, 193, 7, 0.35);
+
+  opacity: 0;
+
+  box-shadow:
+    0 0 12px rgba(255,193,7,0.35),
+    0 0 24px rgba(255,193,7,0.18),
+    0 0 40px rgba(255,193,7,0.08);
+
+  transition: opacity 0.3s ease;
+
+  pointer-events: none;
+}
+
+.glow-hover:hover::before {
+  opacity: 1;
+}
+
+.glow-hover > * {
+  position: relative;
+  z-index: 1;
+}
+*/
+
+/* Slider portfolio */
+.marquee-wrapper {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: scroll-left 48s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }

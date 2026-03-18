@@ -1,65 +1,312 @@
+import Navbar from "@/components/Navbar";
 import Image from "next/image";
+import Footer from "@/components/Footer";
+import Link from "next/link";
+import { projects as allProjects } from "@/data/projects";
+import Reveal from "@/components/Reveal";
 
-export default function Home() {
+export default function HomePage() {
+  const services = [
+    {
+      title: "Graphisme",
+      icon: "/icons/graphisme.png",
+      description:
+        "Identités visuelles, direction artistique et systèmes de marque conçus pour durer.",
+    },
+    {
+      title: "Production",
+      icon: "/icons/production.png",
+      description:
+        "Photo, vidéo, motion design et contenus visuels pensés pour amplifier votre impact.",
+    },
+    {
+      title: "Digital",
+      icon: "/icons/digital.png",
+      description:
+        "Sites web, expériences interactives et solutions digitales orientées performance.",
+    },
+    {
+      title: "Stratégie",
+      icon: "/icons/strategie.png",
+      description:
+        "Positionnement, storytelling et accompagnement créatif pour faire grandir les marques.",
+    },
+  ];
+
+  const featuredProjectSlugs = [
+    "bsfb",
+    "infinix",
+    "salon-africain-du-football",
+    "ninho",
+  ];
+
+  const homepageProjects = featuredProjectSlugs
+    .map((slug) => allProjects.find((project) => project.slug === slug))
+    .filter((project): project is NonNullable<typeof project> => Boolean(project));
+
+  const trustedLogos = [
+    "Infinix",
+    "Heineken",
+    "Ligue 1 Lonaci",
+    "Radisson Blu",
+    "Desperados",
+    "Stella Club",
+    "SAF",
+    "Mutrep-CI",
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+      <Navbar />
+
+      <main className="min-h-screen bg-black text-white">
+        {/* HERO */}
+        <section className="relative min-h-[90vh] overflow-hidden border-b border-white/10">
+          <video
+            className="absolute inset-0 h-full w-full object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+            <source src="/videos/y-groupe-hero.mp4" type="video/mp4" />
+            Votre navigateur ne supporte pas la lecture vidéo.
+          </video>
+
+          <div className="absolute inset-0 bg-black/15" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/35" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(245,158,11,0.18),transparent_25%),radial-gradient(circle_at_20%_80%,rgba(245,158,11,0.10),transparent_30%)]" />
+
+          <div className="relative mx-auto flex min-h-[90vh] max-w-7xl items-center px-6 py-16 lg:px-8 lg:py-20">
+            <Reveal>
+              <div className="max-w-3xl">
+                <p className="mb-4 text-sm font-semibold uppercase tracking-[0.35em] text-amber-400">
+                  Studio de création
+                </p>
+
+                <h1 className="text-5xl font-black leading-none tracking-tight sm:text-6xl lg:text-7xl">
+                  Nous créons des marques et des expériences conçues{" "}
+                  <span className="text-amber-400">pour captiver</span>.
+                </h1>
+
+                <p className="mt-6 max-w-2xl text-lg leading-8 text-white/70">
+                  Y Groupe accompagne les marques, événements et institutions
+                  avec une approche mêlant stratégie, création et exécution
+                  digitale.
+                </p>
+
+                <div className="mt-10 flex flex-wrap gap-4">
+                  <a
+                    href="#projects"
+                    className="glow-hover rounded-full bg-amber-400 px-6 py-3 text-sm font-bold text-black transition hover:scale-[1.02]"
+                  >
+                    Voir nos réalisations
+                  </a>
+
+                  <a
+                    href="#contact"
+                    className="glow-hover rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:border-amber-400 hover:text-amber-300"
+                  >
+                    Démarrer un projet
+                  </a>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* VISION */}
+        <section className="border-b border-white/10 bg-zinc-950/70">
+          <div className="mx-auto max-w-5xl px-6 py-24 text-center lg:px-8">
+            <Reveal>
+              <>
+                <h2 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
+                  Bien plus qu’un simple studio de création
+                </h2>
+                <p className="mx-auto mt-8 max-w-4xl text-lg leading-9 text-white/70">
+                  Nous sommes un studio créatif émergent situé à Abidjan. Nous
+                  accompagnons les marques, évènements et particuliers à faire de
+                  leur image, une identité remarquablement percutante. Chaque jour
+                  nous pensons : rigueur, minutie et avant tout originalité, afin de
+                  proposer une qualité de service irréprochable.
+                </p>
+              </>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* SERVICES */}
+        <section id="services" className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
+          <Reveal>
+            <div className="mb-16 text-center">
+              <h2 className="mx-auto max-w-2xl text-4xl font-black tracking-tight sm:text-5xl">
+                Nous sommes <span className="text-amber-400">experts</span> en :
+              </h2>
+            </div>
+          </Reveal>
+
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {services.map((service, index) => (
+              <Reveal key={service.title} delay={index * 0.08}>
+                <div className="group glow-hover rounded-[2rem] border border-white/10 bg-white/[0.03] p-7 transition-all duration-300 hover:-translate-y-2 hover:border-amber-400/40">
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-400/10">
+                    <Image
+                      src={service.icon}
+                      alt={service.title}
+                      width={32}
+                      height={32}
+                      className="object-contain transition-transform duration-300 group-hover:scale-110"
+                    />
+                  </div>
+
+                  <h3 className="text-2xl font-bold">{service.title}</h3>
+
+                  <p className="mt-4 text-sm leading-7 text-white/65">
+                    {service.description}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+
+        {/* TRUSTED BY */}
+        <section className="border-y border-white/10 bg-zinc-950/60">
+          <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+            <Reveal>
+              <div className="text-center">
+                <h2 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
+                  C&apos;est pourquoi ils nous ont fait confiance
+                </h2>
+              </div>
+            </Reveal>
+
+            <div className="mt-14 grid grid-cols-2 gap-5 md:grid-cols-4">
+              {trustedLogos.map((logo, index) => (
+                <Reveal key={logo} delay={index * 0.06}>
+                  <div className="glow-hover flex h-24 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] px-4 text-center text-sm font-semibold text-white/75">
+                    {logo}
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* PORTFOLIO */}
+        <section id="projects" className="bg-zinc-950/60 px-6 py-24 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <Reveal>
+              <div className="mb-14">
+                <p className="text-sm font-semibold uppercase tracking-[0.35em] text-amber-400">
+                  Portfolio
+                </p>
+                <h2 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
+                  Des projets pensés pour laisser une trace
+                </h2>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.1}>
+              <div className="marquee-wrapper">
+                <div className="marquee-track flex gap-6">
+                  {[...homepageProjects, ...homepageProjects].map((project, index) => {
+                    const imageSrc = project.image;
+
+                    return (
+                      <Link
+                        key={`${project.slug}-${index}`}
+                        href={`/projects/${project.slug}`}
+                        className="glow-hover group w-[360px] shrink-0 overflow-hidden rounded-[2rem] border border-white/10 bg-black"
+                      >
+                        <article>
+                          <div className="relative aspect-[4/3] overflow-hidden">
+                            <Image
+                              src={imageSrc}
+                              alt={project.title}
+                              fill
+                              className="object-cover transition duration-500 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                          </div>
+
+                          <div className="p-7">
+                            <p className="text-xs uppercase tracking-[0.3em] text-amber-400/80">
+                              {project.category}
+                            </p>
+                            <h3 className="mt-4 text-2xl font-black">
+                              {project.title}
+                            </h3>
+                            <p className="mt-4 text-sm leading-7 text-white/65">
+                              {project.summary}
+                            </p>
+                          </div>
+                        </article>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* CONTACT */}
+        <section
+          id="contact"
+          className="relative overflow-hidden border-t border-white/10"
+        >
+          <div className="absolute inset-0 bg-black" />
+          <div className="absolute right-[8%] top-1/2 h-80 w-80 -translate-y-1/2 rounded-full bg-amber-400/10 blur-3xl" />
+          <div className="absolute bottom-10 left-[12%] h-48 w-48 rounded-full bg-amber-500/10 blur-3xl" />
+
+          <div className="relative mx-auto grid max-w-7xl gap-10 px-6 py-24 lg:grid-cols-2 lg:px-8">
+            <Reveal>
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.35em] text-amber-400">
+                  Contact
+                </p>
+                <h2 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
+                  Parlons de votre prochain projet
+                </h2>
+                <p className="mt-6 max-w-xl text-lg leading-8 text-white/70">
+                  Vous avez une marque à construire, un événement à promouvoir ou
+                  une idée à concrétiser ? Construisons quelque chose de remarquable.
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.12}>
+              <form className="glow-hover grid gap-4 rounded-[2rem] border border-white/10 bg-black/40 p-6 backdrop-blur-md">
+                <input
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 outline-none placeholder:text-white/35 focus:border-amber-400"
+                  placeholder="Nom"
+                />
+                <input
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 outline-none placeholder:text-white/35 focus:border-amber-400"
+                  placeholder="Entreprise"
+                />
+                <input
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 outline-none placeholder:text-white/35 focus:border-amber-400"
+                  placeholder="Email"
+                />
+                <textarea
+                  className="min-h-[140px] rounded-2xl border border-white/10 bg-black/40 px-4 py-4 outline-none placeholder:text-white/35 focus:border-amber-400"
+                  placeholder="Parlez-nous de votre projet"
+                />
+                <button
+                  type="submit"
+                  className="glow-hover rounded-full bg-amber-400 px-6 py-4 text-sm font-bold text-black transition hover:scale-[1.01]"
+                >
+                  Envoyer la demande
+                </button>
+              </form>
+            </Reveal>
+          </div>
+        </section>
       </main>
-    </div>
+
+      <Footer />
+    </>
   );
 }
