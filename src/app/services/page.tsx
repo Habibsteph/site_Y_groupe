@@ -3,6 +3,8 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
+import ContactForm from "@/components/ContactForm";
+
 
 const services = [
   {
@@ -49,7 +51,7 @@ export default function ServicesPage() {
               </p>
 
               <h1 className="mt-4 text-5xl font-black tracking-tight sm:text-6xl">
-                Nos expertises au service de votre image.
+                Notre expertise au service de votre image.
               </h1>
 
               <p className="mt-8 max-w-3xl text-lg leading-9 text-white/70">
@@ -129,34 +131,7 @@ export default function ServicesPage() {
             </Reveal>
 
             <Reveal delay={0.12}>
-              <form className="glow-hover grid gap-4 rounded-[2rem] border border-white/10 bg-black/40 p-6 backdrop-blur-md">
-                <input
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 outline-none placeholder:text-white/35 focus:border-amber-400"
-                  placeholder="Nom"
-                />
-
-                <input
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 outline-none placeholder:text-white/35 focus:border-amber-400"
-                  placeholder="Entreprise"
-                />
-
-                <input
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 outline-none placeholder:text-white/35 focus:border-amber-400"
-                  placeholder="Email"
-                />
-
-                <textarea
-                  className="min-h-[140px] rounded-2xl border border-white/10 bg-black/40 px-4 py-4 outline-none placeholder:text-white/35 focus:border-amber-400"
-                  placeholder="Parlez-nous de votre projet"
-                />
-
-                <button
-                  type="submit"
-                  className="glow-hover rounded-full bg-amber-400 px-6 py-4 text-sm font-bold text-black transition hover:scale-[1.01]"
-                >
-                  Envoyer la demande
-                </button>
-              </form>
+              <ContactForm />
             </Reveal>
           </div>
         </section>

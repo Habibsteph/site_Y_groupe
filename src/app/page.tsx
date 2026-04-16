@@ -2,10 +2,28 @@ import Navbar from "@/components/Navbar";
 import Image from "next/image";
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { projects as allProjects } from "@/data/projects";
 import Reveal from "@/components/Reveal";
+import { client } from "@/sanity/lib/client";
+import { PROJECTS_QUERY } from "@/sanity/lib/queries";
+import { urlFor } from "@/sanity/lib/image";
+import ContactForm from "@/components/ContactForm";
 
-export default function HomePage() {
+type HomeProject = {
+  _id: string;
+  slug: string;
+  title: string;
+  category?: string | null;
+  summary?: string | null;
+  coverImage?: any;
+};
+
+type TrustedLogo = {
+  name: string;
+  src: string;
+  className?: string;
+};
+
+export default async function HomePage() {
   const services = [
     {
       title: "Graphisme",
@@ -33,27 +51,98 @@ export default function HomePage() {
     },
   ];
 
-  const featuredProjectSlugs = [
-    "bsfb",
-    "infinix",
-    "salon-africain-du-football",
-    "ninho",
+  const trustedLogos: TrustedLogo[] = [
+    {
+      name: "Infinix",
+      src: "/logos/infinix.png",
+      className: "max-h-9 sm:max-h-10 max-w-[150px] sm:max-w-[170px]",
+    },
+    {
+      name: "Radisson Blu",
+      src: "/logos/radisson.png",
+      className: "max-h-9 sm:max-h-10 max-w-[145px] sm:max-w-[165px]",
+    },
+    {
+      name: "Heineken",
+      src: "/logos/heineken.png",
+      className: "max-h-12 sm:max-h-14 max-w-[135px] sm:max-w-[150px]",
+    },
+    {
+      name: "SAF",
+      src: "/logos/saf.png",
+      className: "max-h-24 sm:max-h-28 max-w-[110px] sm:max-w-[120px]",
+    },
+    {
+      name: "BK Production",
+      src: "/logos/bk-production.png",
+      className: "max-h-24 sm:max-h-28 max-w-[110px] sm:max-w-[120px]",
+    },
+    {
+      name: "Muterp-CI",
+      src: "/logos/muterp-ci.png",
+      className: "max-h-12 sm:max-h-14 max-w-[150px] sm:max-w-[170px]",
+    },
+    {
+      name: "Widgunz",
+      src: "/logos/widgunz.png",
+      className: "max-h-9 sm:max-h-10 max-w-[150px] sm:max-w-[170px]",
+    },
+    {
+      name: "<Dydy-yeman>",
+      src: "/logos/didi-yeman.png",
+      className: "max-h-12 sm:max-h-14 max-w-[150px] sm:max-w-[170px]",
+    },
+    {
+      name: "Tripa",
+      src: "/logos/tripa.png",
+      className: "max-h-12 sm:max-h-14 max-w-[135px] sm:max-w-[150px]",
+    },
+    {
+      name: "Young-ambitious",
+      src: "/logos/young-ambitious.png",
+      className: "max-h-12 sm:max-h-14 max-w-[135px] sm:max-w-[150px]",
+    },
+    {
+      name: "gaïa",
+      src: "/logos/gaïa.png",
+      className: "max-h-12 sm:max-h-14 max-w-[135px] sm:max-w-[150px]",
+    },
+    {
+      name: "lias-princess",
+      src: "/logos/lia's-princess.png",
+      className: "max-h-12 sm:max-h-14 max-w-[135px] sm:max-w-[150px]",
+    },
+    {
+      name: "Felah",
+      src: "/logos/felah.png",
+      className: "max-h-12 sm:max-h-14 max-w-[135px] sm:max-w-[150px]",
+    },
+    {
+      name: "Full boss",
+      src: "/logos/full-boss.png",
+      className: "max-h-12 sm:max-h-14 max-w-[135px] sm:max-w-[150px]",
+    },
+    {
+      name: "KIJ",
+      src: "/logos/kij.png",
+      className: "max-h-12 sm:max-h-14 max-w-[135px] sm:max-w-[150px]",
+    },
+    {
+      name: "La-nuit-blanche",
+      src: "/logos/la-nuit-blanche.png",
+      className: "max-h-12 sm:max-h-14 max-w-[135px] sm:max-w-[150px]",
+    },
   ];
 
-  const homepageProjects = featuredProjectSlugs
-    .map((slug) => allProjects.find((project) => project.slug === slug))
-    .filter((project): project is NonNullable<typeof project> => Boolean(project));
+  let homepageProjects: HomeProject[] = [];
 
-  const trustedLogos = [
-    "Infinix",
-    "Heineken",
-    "Ligue 1 Lonaci",
-    "Radisson Blu",
-    "Desperados",
-    "Stella Club",
-    "SAF",
-    "Mutrep-CI",
-  ];
+try {
+  const sanityProjects = await client.fetch<HomeProject[]>(PROJECTS_QUERY);
+  homepageProjects = (sanityProjects ?? []).slice(0, 6);
+} catch (error) {
+  console.error("Sanity fetch error:", error);
+  homepageProjects = [];
+}
 
   return (
     <>
@@ -126,9 +215,9 @@ export default function HomePage() {
                 <p className="mx-auto mt-8 max-w-4xl text-lg leading-9 text-white/70">
                   Nous sommes un studio créatif émergent situé à Abidjan. Nous
                   accompagnons les marques, évènements et particuliers à faire de
-                  leur image, une identité remarquablement percutante. Chaque jour
-                  nous pensons : rigueur, minutie et avant tout originalité, afin de
-                  proposer une qualité de service irréprochable.
+                  leur image, une identité remarquablement percutante. Chaque
+                  jour nous pensons : rigueur, minutie et avant tout originalité,
+                  afin de proposer une qualité de service irréprochable.
                 </p>
               </>
             </Reveal>
@@ -170,9 +259,11 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* TRUSTED BY */}
-        <section className="border-y border-white/10 bg-zinc-950/60">
-          <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        {/* TRUSTED BY — version plus “Apple” */}
+        <section className="relative overflow-hidden border-y border-white/10 bg-zinc-950/60">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.025),transparent_55%)]" />
+
+          <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8">
             <Reveal>
               <div className="text-center">
                 <h2 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
@@ -181,11 +272,15 @@ export default function HomePage() {
               </div>
             </Reveal>
 
-            <div className="mt-14 grid grid-cols-2 gap-5 md:grid-cols-4">
+            <div className="mx-auto mt-20 grid max-w-6xl grid-cols-2 items-center justify-items-center gap-x-12 gap-y-14 md:grid-cols-4 lg:gap-x-24 lg:gap-y-20">
               {trustedLogos.map((logo, index) => (
-                <Reveal key={logo} delay={index * 0.06}>
-                  <div className="glow-hover flex h-24 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] px-4 text-center text-sm font-semibold text-white/75">
-                    {logo}
+                <Reveal key={logo.name} delay={index * 0.05}>
+                  <div className="group flex min-h-[82px] w-full items-center justify-center">
+                    <img
+                      src={logo.src}
+                      alt={logo.name}
+                      className={`w-auto object-contain opacity-75 grayscale transition-all duration-500 ease-out group-hover:scale-[1.08] group-hover:opacity-100 group-hover:grayscale-0 ${logo.className || "max-h-10 max-w-[150px]"}`}
+                    />
                   </div>
                 </Reveal>
               ))}
@@ -208,45 +303,68 @@ export default function HomePage() {
             </Reveal>
 
             <Reveal delay={0.1}>
-              <div className="marquee-wrapper">
-                <div className="marquee-track flex gap-6">
-                  {[...homepageProjects, ...homepageProjects].map((project, index) => {
-                    const imageSrc = project.image;
+              {homepageProjects.length > 0 ? (
+                <div className="marquee-wrapper">
+                  <div className="marquee-track flex gap-6">
+                    {[...homepageProjects, ...homepageProjects].map(
+                      (project, index) => (
+                        <Link
+                          key={`${project._id}-${index}`}
+                          href={`/projects/${project.slug}`}
+                          className="glow-hover group w-[360px] shrink-0 overflow-hidden rounded-[2rem] border border-white/10 bg-black"
+                        >
+                          <article>
+                            <div className="relative aspect-[4/3] overflow-hidden">
+                              {project.coverImage ? (
+                                <Image
+                                  src={urlFor(project.coverImage)
+                                    .width(1200)
+                                    .height(900)
+                                    .fit("crop")
+                                    .url()}
+                                  alt={project.title}
+                                  fill
+                                  className="object-cover transition duration-500 group-hover:scale-105"
+                                />
+                              ) : (
+                                <div className="absolute inset-0 bg-white/5" />
+                              )}
 
-                    return (
-                      <Link
-                        key={`${project.slug}-${index}`}
-                        href={`/projects/${project.slug}`}
-                        className="glow-hover group w-[360px] shrink-0 overflow-hidden rounded-[2rem] border border-white/10 bg-black"
-                      >
-                        <article>
-                          <div className="relative aspect-[4/3] overflow-hidden">
-                            <Image
-                              src={imageSrc}
-                              alt={project.title}
-                              fill
-                              className="object-cover transition duration-500 group-hover:scale-105"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-                          </div>
+                              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                            </div>
 
-                          <div className="p-7">
-                            <p className="text-xs uppercase tracking-[0.3em] text-amber-400/80">
-                              {project.category}
-                            </p>
-                            <h3 className="mt-4 text-2xl font-black">
-                              {project.title}
-                            </h3>
-                            <p className="mt-4 text-sm leading-7 text-white/65">
-                              {project.summary}
-                            </p>
-                          </div>
-                        </article>
-                      </Link>
-                    );
-                  })}
+                            <div className="p-7">
+                              {project.category && (
+                                <p className="text-xs uppercase tracking-[0.3em] text-amber-400/80">
+                                  {project.category}
+                                </p>
+                              )}
+                              <h3 className="mt-4 text-2xl font-black">
+                                {project.title}
+                              </h3>
+                              {project.summary && (
+                                <p className="mt-4 text-sm leading-7 text-white/65">
+                                  {project.summary}
+                                </p>
+                              )}
+                            </div>
+                          </article>
+                        </Link>
+                      )
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="rounded-[2rem] border border-white/10 bg-white/[0.02] px-6 py-14 text-center">
+                  <p className="text-lg font-semibold text-white">
+                    Aucun projet mis en avant pour le moment.
+                  </p>
+                  <p className="mt-3 text-white/55">
+                    Ajoute quelques projets dans Sanity pour les faire apparaître
+                    ici.
+                  </p>
+                </div>
+              )}
             </Reveal>
           </div>
         </section>
@@ -271,36 +389,14 @@ export default function HomePage() {
                 </h2>
                 <p className="mt-6 max-w-xl text-lg leading-8 text-white/70">
                   Vous avez une marque à construire, un événement à promouvoir ou
-                  une idée à concrétiser ? Construisons quelque chose de remarquable.
+                  une idée à concrétiser ? Construisons quelque chose de
+                  remarquable.
                 </p>
               </div>
             </Reveal>
 
             <Reveal delay={0.12}>
-              <form className="glow-hover grid gap-4 rounded-[2rem] border border-white/10 bg-black/40 p-6 backdrop-blur-md">
-                <input
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 outline-none placeholder:text-white/35 focus:border-amber-400"
-                  placeholder="Nom"
-                />
-                <input
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 outline-none placeholder:text-white/35 focus:border-amber-400"
-                  placeholder="Entreprise"
-                />
-                <input
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 outline-none placeholder:text-white/35 focus:border-amber-400"
-                  placeholder="Email"
-                />
-                <textarea
-                  className="min-h-[140px] rounded-2xl border border-white/10 bg-black/40 px-4 py-4 outline-none placeholder:text-white/35 focus:border-amber-400"
-                  placeholder="Parlez-nous de votre projet"
-                />
-                <button
-                  type="submit"
-                  className="glow-hover rounded-full bg-amber-400 px-6 py-4 text-sm font-bold text-black transition hover:scale-[1.01]"
-                >
-                  Envoyer la demande
-                </button>
-              </form>
+              <ContactForm />
             </Reveal>
           </div>
         </section>

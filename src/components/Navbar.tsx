@@ -39,7 +39,7 @@ export default function Navbar() {
             />
           </div>
         </Link>
-
+  
         <nav className="hidden items-center gap-2 md:flex">
           {navItems.map((item) => {
             const active = isActive(item.href);

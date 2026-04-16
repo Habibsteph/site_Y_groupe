@@ -7,7 +7,34 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
-import { projects, type ProjectPole } from "@/data/projects";
+import { client } from "@/sanity/lib/client";
+import { PROJECTS_QUERY } from "@/sanity/lib/queries";
+import { urlFor } from "@/sanity/lib/image";
+
+type ProjectPole =
+  | "Graphisme"
+  | "Production"
+  | "Digital"
+  | "Stratégie & Conseil";
+
+type Project = {
+  _id: string;
+  slug: string;
+  title: string;
+  category?: string | null;
+  summary?: string | null;
+  client?: string | null;
+  year?: number | null;
+  poles?: ProjectPole[] | null;
+  coverImage?: any;
+  services?: string[] | null;
+  heroTitle?: string | null;
+  description?: string | null;
+  challenge?: string | null;
+  solution?: string | null;
+  result?: string | null;
+  gallery?: any[] | null;
+};
 
 const filters: Array<"Tous" | ProjectPole> = [
   "Tous",
@@ -36,6 +63,9 @@ function ProjectsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const serviceParam = searchParams.get("service");
   const initialFilter =
     serviceParam && serviceToPoleMap[serviceParam]
@@ -44,6 +74,28 @@ function ProjectsContent() {
 
   const [activeFilter, setActiveFilter] =
     useState<"Tous" | ProjectPole>(initialFilter);
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const data = await client.fetch<Project[]>(PROJECTS_QUERY);
+
+        const normalizedProjects = (data ?? []).map((project) => ({
+          ...project,
+          poles: project.poles ?? [],
+          services: project.services ?? [],
+        }));
+
+        setProjects(normalizedProjects);
+      } catch (error) {
+        console.error("Erreur lors du chargement des projets Sanity :", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, []);
 
   useEffect(() => {
     const service = searchParams.get("service");
@@ -68,8 +120,8 @@ function ProjectsContent() {
 
   const filteredProjects = useMemo(() => {
     if (activeFilter === "Tous") return projects;
-    return projects.filter((project) => project.poles.includes(activeFilter));
-  }, [activeFilter]);
+    return projects.filter((project) => project.poles?.includes(activeFilter));
+  }, [activeFilter, projects]);
 
   return (
     <>
@@ -121,9 +173,11 @@ function ProjectsContent() {
         <Reveal>
           <div className="mb-8 flex items-center justify-between gap-4">
             <p className="text-sm text-white/45">
-              {filteredProjects.length} projet
-              {filteredProjects.length > 1 ? "s" : ""} affiché
-              {filteredProjects.length > 1 ? "s" : ""}
+              {loading
+                ? "Chargement..."
+                : `${filteredProjects.length} projet${
+                    filteredProjects.length > 1 ? "s" : ""
+                  } affiché${filteredProjects.length > 1 ? "s" : ""}`}
             </p>
 
             <p className="hidden text-sm text-white/45 md:block">
@@ -133,10 +187,18 @@ function ProjectsContent() {
           </div>
         </Reveal>
 
-        {filteredProjects.length > 0 ? (
+        {loading ? (
+          <Reveal>
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.02] px-6 py-14 text-center">
+              <p className="text-lg font-semibold text-white">
+                Chargement des projets...
+              </p>
+            </div>
+          </Reveal>
+        ) : filteredProjects.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {filteredProjects.map((project, index) => (
-              <Reveal key={project.slug} delay={index * 0.08}>
+              <Reveal key={project._id} delay={index * 0.08}>
                 <Link href={`/projects/${project.slug}`} className="group block">
                   <article
                     className="
@@ -146,56 +208,72 @@ function ProjectsContent() {
                     "
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="
-                          object-cover
-                          transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]
-                          group-hover:scale-[1.06]
-                        "
-                      />
+                      {project.coverImage ? (
+                        <Image
+                          src={urlFor(project.coverImage)
+                            .width(1200)
+                            .height(900)
+                            .fit("crop")
+                            .url()}
+                          alt={project.title}
+                          fill
+                          className="
+                            object-cover
+                            transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]
+                            group-hover:scale-[1.06]
+                          "
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-white/5" />
+                      )}
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
                       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.22),transparent_38%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.10),transparent_30%)] opacity-70 transition-opacity duration-500 group-hover:opacity-100" />
                       <div className="pointer-events-none absolute inset-0 rounded-t-[2rem] ring-1 ring-inset ring-white/10 transition-all duration-500 group-hover:ring-amber-400/20" />
 
-                      <div className="absolute left-5 top-5 flex flex-wrap gap-2">
-                        {project.poles.map((pole) => (
-                          <span
-                            key={pole}
-                            className="rounded-full border border-white/10 bg-black/55 px-3 py-1 text-[11px] font-semibold text-white/85 backdrop-blur-sm"
-                          >
-                            {pole}
-                          </span>
-                        ))}
-                      </div>
+                      {!!project.poles?.length && (
+                        <div className="absolute left-5 top-5 flex flex-wrap gap-2">
+                          {project.poles.map((pole) => (
+                            <span
+                              key={pole}
+                              className="rounded-full border border-white/10 bg-black/55 px-3 py-1 text-[11px] font-semibold text-white/85 backdrop-blur-sm"
+                            >
+                              {pole}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div className="p-7">
-                      <p className="text-xs uppercase tracking-[0.3em] text-amber-400/80 transition-colors duration-300 group-hover:text-amber-300">
-                        {project.category}
-                      </p>
+                      {project.category && (
+                        <p className="text-xs uppercase tracking-[0.3em] text-amber-400/80 transition-colors duration-300 group-hover:text-amber-300">
+                          {project.category}
+                        </p>
+                      )}
 
                       <h2 className="mt-4 text-2xl font-black transition-colors duration-300 group-hover:text-white">
                         {project.title}
                       </h2>
 
-                      <p className="mt-4 text-sm leading-7 text-white/65 transition-colors duration-300 group-hover:text-white/75">
-                        {project.summary}
-                      </p>
+                      {project.summary && (
+                        <p className="mt-4 text-sm leading-7 text-white/65 transition-colors duration-300 group-hover:text-white/75">
+                          {project.summary}
+                        </p>
+                      )}
 
-                      <div className="mt-6 flex flex-wrap gap-2">
-                        {project.services.slice(0, 3).map((service) => (
-                          <span
-                            key={service}
-                            className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/55"
-                          >
-                            {service}
-                          </span>
-                        ))}
-                      </div>
+                      {!!project.services?.length && (
+                        <div className="mt-6 flex flex-wrap gap-2">
+                          {project.services.slice(0, 3).map((service) => (
+                            <span
+                              key={service}
+                              className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/55"
+                            >
+                              {service}
+                            </span>
+                          ))}
+                        </div>
+                      )}
 
                       <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-amber-300 transition-all duration-300 group-hover:gap-3 group-hover:text-amber-200">
                         <span>Voir l’étude de cas</span>
